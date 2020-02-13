@@ -7,13 +7,14 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// Chat Page which will be appeared atfer successful connection with other client.
+
 public class client extends javax.swing.JFrame {
     
     public ObjectInputStream objectInputStream;
     public ObjectOutputStream objectOutputStream;
     public receiveMessage receive;
     public filePicker filepicker;
-    public destinationPicker desPicker;
     public static String Dir = "C:\\Users\\USER\\Desktop\\XYZ\\";
     public boolean flag=false;
     
@@ -22,7 +23,6 @@ public class client extends javax.swing.JFrame {
         userName.setText(start.UserName);
         textarea.setEditable(false);
         filepicker = new filePicker();
-        desPicker = new destinationPicker();
         try{
         objectOutputStream = new ObjectOutputStream(start.socket.getOutputStream());
         objectInputStream = new ObjectInputStream(start.socket.getInputStream());
@@ -134,7 +134,9 @@ public class client extends javax.swing.JFrame {
     }//GEN-LAST:event_messageActionPerformed
 
     private void sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendActionPerformed
-        // TODO add your handling code here:
+       
+        // Send Text Message to other client
+        //First read from EditText and then send through outputStream 
         String str = message.getText();
         System.out.println("Sending Message");
         try{
@@ -147,9 +149,10 @@ public class client extends javax.swing.JFrame {
         message.setText("");
     }//GEN-LAST:event_sendActionPerformed
 
+    
     private void closeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeActionPerformed
         try {
-            // TODO add your handling code here:
+            // Close Connection , close Socket and close streams
             flag=true;
             objectInputStream.close();
             objectOutputStream.close();
@@ -161,11 +164,13 @@ public class client extends javax.swing.JFrame {
     }//GEN-LAST:event_closeActionPerformed
 
     private void sendfilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendfilesActionPerformed
-        // TODO add your handling code here:
         
+        // Send files to other client.
+        // First file to send , must be picked by sender.
         String path = filepicker.getPath();
         int count=0;
         FileInputStream fileInputStream = null;
+        //Open file in File Object...
         File f = new File(path);
         
         try {
@@ -174,17 +179,23 @@ public class client extends javax.swing.JFrame {
             Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        // Specify Buffer Size to be read from file.
         byte b[] = new byte[1000];
         byte[] c;
-        System.out.println("Start Sending File");
+        
         try {
+            /* 
+            First Send Type of Message ( Here we are giving 0 for Text message and 1 for files to be recognise at 
+            receiver end ).
+            Then we are reading bytes from file and then sending to receiver.
+            And at the end EOF Message must be send.
+            */
             objectOutputStream.writeObject("1"+f.getName());
             while((count=fileInputStream.read(b))!=-1){
                c = Arrays.copyOf(b, count);
             objectOutputStream.writeObject(c);
             }
             objectOutputStream.writeObject("EOF".getBytes());
-            System.out.println("End of file");
         } catch (IOException ex) {
             Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -195,12 +206,11 @@ public class client extends javax.swing.JFrame {
             Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        print("Successfully Send File : "+f.getName());
     }//GEN-LAST:event_sendfilesActionPerformed
 
     public void receiveFile(String fileName)
     {   
-        
+        // First open file to be receive from sender.
         File f = new File(Dir+fileName);
         FileOutputStream fileOutputStream = null;
         
@@ -210,10 +220,16 @@ public class client extends javax.swing.JFrame {
             Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        // Specify Buffer size to be read from file.
         byte b[] = new byte[1005];
         String s;
         while(true)
         {
+            /*
+            Reading bytes from InputStream and then If EOF not occured, writing to file.
+            IF occured , break while loop.
+            */
+            
             try {
                 b = (byte[])objectInputStream.readObject();
                 s = new String(b);
@@ -231,14 +247,14 @@ public class client extends javax.swing.JFrame {
             } 
             
         }
+        // Closing fileOutputStream.
+        
         try {
             fileOutputStream.close();
         } catch (IOException ex) {
             Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
         }
      
-        System.out.println("Returning from Receive File");
-        print("Successfully Received File : "+fileName);
     }
     
     synchronized public void print(String s)
@@ -282,6 +298,10 @@ public class client extends javax.swing.JFrame {
         });
     }
     
+    /*
+    Create class to receive message from sender , implements Runnable to create thread which will 
+    run infinitely to get message from sender.
+    */
     
     class receiveMessage implements Runnable
     {
