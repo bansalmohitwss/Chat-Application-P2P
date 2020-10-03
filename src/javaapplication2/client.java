@@ -23,15 +23,17 @@ public class client extends javax.swing.JFrame {
         userName.setText(start.UserName);
         textarea.setEditable(false);
         filepicker = new filePicker();
+        
         try{
-        objectOutputStream = new ObjectOutputStream(start.socket.getOutputStream());
-        objectInputStream = new ObjectInputStream(start.socket.getInputStream());
-        System.out.println("Successfully Open Streams for "+ start.UserName);
+            objectOutputStream = new ObjectOutputStream(start.socket.getOutputStream());
+            objectInputStream = new ObjectInputStream(start.socket.getInputStream());
+            System.out.println("Successfully Open Streams for "+ start.UserName);
         }catch(IOException e)
         {
             System.out.println("Error in initializing streams"+e);
         }
         
+        //begin receive message thread
         receive = new receiveMessage(this);
         receive.t.start();
     }
@@ -51,15 +53,19 @@ public class client extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         textarea.setColumns(20);
+        textarea.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         textarea.setRows(5);
         jScrollPane1.setViewportView(textarea);
 
+        message.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        message.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         message.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 messageActionPerformed(evt);
             }
         });
 
+        send.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         send.setText("Send");
         send.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -67,6 +73,7 @@ public class client extends javax.swing.JFrame {
             }
         });
 
+        sendfiles.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         sendfiles.setText("Send files");
         sendfiles.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -74,7 +81,8 @@ public class client extends javax.swing.JFrame {
             }
         });
 
-        close.setText("close");
+        close.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        close.setText("Close");
         close.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 closeActionPerformed(evt);
@@ -85,45 +93,42 @@ public class client extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(close, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(64, 64, 64))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(message, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(send)
-                                .addGap(31, 31, 31)
-                                .addComponent(sendfiles))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 563, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(137, 137, 137)
+                                .addComponent(sendfiles)
+                                .addGap(46, 46, 46)
+                                .addComponent(close, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(message)
+                                .addGap(18, 18, 18)
+                                .addComponent(send))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(248, 248, 248)
                         .addComponent(userName, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(32, 32, 32)
-                .addComponent(userName, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(userName, javax.swing.GroupLayout.DEFAULT_SIZE, 2, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(close)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(message, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(send, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(sendfiles, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(46, 46, 46))))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(message, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(send, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(sendfiles, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(close))
+                .addGap(20, 20, 20))
         );
 
         pack();
@@ -140,7 +145,7 @@ public class client extends javax.swing.JFrame {
         String str = message.getText();
         System.out.println("Sending Message");
         try{
-        objectOutputStream.writeObject("0"+start.UserName+ ": " +str);
+            objectOutputStream.writeObject("0"+start.UserName+ ": " +str);
         }catch(IOException e)
         {
             System.out.println("Error in Sending Message"+e);
@@ -234,7 +239,7 @@ public class client extends javax.swing.JFrame {
                 b = (byte[])objectInputStream.readObject();
                 s = new String(b);
                 if(s.compareTo("EOF")==0){
-                   System.out.println("End of zfile");
+                   System.out.println("End of file");
                     break;
                 }
                 else
@@ -318,28 +323,31 @@ public class client extends javax.swing.JFrame {
             while(true)
             {
                 try{
-                s = (String)c.objectInputStream.readObject();
-                if(s.charAt(0)=='1'){
-                    System.out.println("Receiving File");
-                   c.receiveFile(s.substring(1,s.length()));
-                   continue;
-                }
-                System.out.println("Message Received");
-                c.print(s.substring(1,s.length()));
+                    s = (String)c.objectInputStream.readObject();
+                    if(s.charAt(0)=='1'){
+                        System.out.println("Receiving File");
+                        c.receiveFile(s.substring(1,s.length()));
+                        continue;
+                    }
+                
+                    System.out.println("Message Received");
+                    c.print(s.substring(1,s.length()));
                 }catch(IOException e)
                 {
                     System.out.println("Socket Error");
                     if(!flag)
                     {
                         JOptionPane.showMessageDialog(c, "Your Friend is offline Now\nRedirecting to starting Page");
-                         try {
-                               Thread.sleep(500);
-                           } catch (InterruptedException ex) {
-                              Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
-                         }
-                           new start().setVisible(true);
-                         c.dispose();
-                          break;
+                        try {
+                            Thread.sleep(500);
+                        }catch (InterruptedException ex) {
+                            Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        
+                        //if client turned off close current window and go back to start window
+                        new start().setVisible(true);
+                        c.dispose();
+                        break;
                     }
                     else
                         break;
